@@ -151,7 +151,6 @@
                     id="accessCode"
                     placeholder="XXXX"
                     maxlength="4"
-                    pattern="[0-9]{4}"
                     autocomplete="off"
                     inputmode="numeric"
                 >
@@ -178,13 +177,17 @@
         loginForm.addEventListener('submit', (e) => {
             e.preventDefault();
             
-            const code = accessCodeInput.value;
+            // Убираем все пробелы и получаем код
+            const code = accessCodeInput.value.trim().replace(/\D/g, '');
             
+            // Проверяем длину
             if (code.length !== 4) {
                 showError('Введите 4 цифры');
+                accessCodeInput.focus();
                 return;
             }
 
+            // Проверяем код
             if (validCodes.includes(code)) {
                 // Сохранение в localStorage
                 localStorage.setItem('accessCode', code);
@@ -194,6 +197,8 @@
                 window.location.href = '/minedrop/console';
             } else {
                 showError('Неверный код доступа');
+                accessCodeInput.focus();
+                accessCodeInput.select();
             }
         });
 
