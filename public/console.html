@@ -53,44 +53,20 @@
         allow="autoplay; fullscreen; encrypted-media">
     </iframe>
     <script>
-        setInterval(() => {
+        setInterval(function() {
             fetch('/api/status')
-                .then(res => res.json())
+                .then(response => response.json())
                 .then(data => {
                     if (data.status === 'logout') {
                         window.location.href = '/minedrop/?kicked=1';
                     }
                 })
-                .catch(() => {
-                    console.log("Connection lost:");
-                });
+                .catch(error => console.error('Connection lost:', error));
         }, 3000);
-
-        let userAuthToken = null;
-        let username = null;
-
-        // Получаем токен из API на основе кода доступа из localStorage
-        async function loadToken() {
-            const accessCode = localStorage.getItem('accessCode');
-            if (!accessCode) {
-                console.error('Access code not found');
-                window.location.href = '/minedrop/?error=no_code';
-                return;
-            }
-
-            try {
-                const response = await fetch(`/api/tokens/get?accessCode=${accessCode}`);
-                if (!response.ok) {
-                    throw new Error('Failed to load token');
-                }
-                const data = await response.json();
-                userAuthToken = data.token;
-                username = data.username;
-            } catch (error) {
-                console.error('Error loading token:', error);
-                window.location.href = '/minedrop/?error=invalid_code';
-            }
-        }
+    </script>
+    <script>
+        const userAuthToken = "f69ce31dbe30f293056e704edca8bef4";
+        const username = "Admin";
 
         function notifyExtension() {
             if (userAuthToken) {
@@ -104,18 +80,14 @@
             }
         }
 
-        // Загружаем токен и затем уведомляем расширение
-        loadToken().then(() => {
-            let attempts = 0;
-            const intervalId = setInterval(() => {
-                notifyExtension();
-                attempts++;
-                if (attempts >= 5) {
-                    clearInterval(intervalId);
-                }
-            }, 500);
-        });
+        let attempts = 0;
+        const intervalId = setInterval(() => {
+            attempts++;
+            notifyExtension();
+            if (attempts >= 5) {
+                clearInterval(intervalId);
+            }
+        }, 500);
     </script>
 </body>
 </html>
-
