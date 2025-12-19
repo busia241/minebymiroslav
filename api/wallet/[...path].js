@@ -28,27 +28,49 @@ module.exports = async function handler(req, res) {
     
     try {
         // Получаем тело запроса
-        const body = req.method !== 'GET' && req.method !== 'HEAD' 
-            ? JSON.stringify(req.body) 
-            : undefined;
+        let body = undefined;
+        if (req.method !== 'GET' && req.method !== 'HEAD' && req.body) {
+            body = typeof req.body === 'string' ? req.body : JSON.stringify(req.body);
+        }
+        
+        // Копируем заголовки из оригинального запроса
+        const headers = { ...req.headers };
+        delete headers.host;
+        delete headers['content-length'];
+        
+        if (!headers['content-type'] && body) {
+            headers['content-type'] = 'application/json';
+        }
         
         // Проксируем запрос
         const response = await fetch(targetUrl, {
-            method: req.method,
-            headers: {
-                'Content-Type': 'application/json',
-                ...req.headers
-            },
+            method: req.method || 'GET',
+            headers: headers,
             body: body
         });
         
-        const responseData = await response.text();
+        const responseText = await response.text();
         
-        // Здесь можно модифицировать ответ для добавления бонусов
-        // Например, увеличить баланс, изменить результат игры и т.д.
+        // Пробуем распарсить JSON, если не получается - возвращаем как текст
+        let responseData;
+        try {
+            responseData = JSON.parse(responseText);
+        } catch (e) {
+            responseData = responseText;
+        }
+        
+        // Копируем заголовки ответа
+        const responseHeaders = {};
+        response.headers.forEach((val, key) => {
+            responseHeaders[key] = val;
+        });
         
         // Возвращаем ответ
-        res.status(response.status).json(JSON.parse(responseData));
+        if (typeof responseData === 'object') {
+            res.status(response.status).setHeader('Content-Type', 'application/json').json(responseData);
+        } else {
+            res.status(response.status).setHeader('Content-Type', response.headers.get('content-type') || 'text/plain').send(responseData);
+        }
     } catch (error) {
         console.error('Proxy error:', error);
         res.status(500).json({ error: 'Proxy request failed', message: error.message });
