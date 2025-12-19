@@ -1,0 +1,13 @@
+{
+  "name": "minedrop-site",
+  "version": "1.0.0",
+  "description": "Minedrop game console site",
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "echo 'No build step required'"
+  },
+  "keywords": ["minedrop", "game"],
+  "author": "miroslav",
+  "license": "MIT"
+}
+
