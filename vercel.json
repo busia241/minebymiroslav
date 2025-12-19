@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/api/script/get_script.php",
+      "destination": "/api/script/get_script.php.js"
+    },
+    {
       "source": "/minedrop/console",
       "destination": "/console.html"
     },

@@ -172,10 +172,49 @@
         .message.show {
             display: block;
         }
+
+        .login-screen {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .login-container h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+        }
     </style>
 </head>
 <body>
-    <div class="container">
+    <!-- Экран входа -->
+    <div id="loginScreen" class="login-screen">
+        <div class="login-container">
+            <h2>🔐 Доступ к админ панели</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label>Пароль:</label>
+                    <input type="password" id="adminPassword" placeholder="Введите пароль" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Войти</button>
+                <div class="error-message" id="loginError"></div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Основная панель -->
+    <div id="adminPanel" class="container" style="display: none;">
         <h1>🎰 Админ панель Minedrop</h1>
 
         <div id="message" class="message"></div>
@@ -244,6 +283,42 @@
 
     <script>
         const API_BASE = '/api/tokens';
+        const ADMIN_PASSWORD = 'admin123'; // Измените этот пароль!
+        
+        // Проверка пароля
+        function checkAuth() {
+            const savedPassword = sessionStorage.getItem('adminAuth');
+            if (savedPassword === ADMIN_PASSWORD) {
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('adminPanel').style.display = 'block';
+                return true;
+            }
+            return false;
+        }
+        
+        // Обработка входа
+        document.getElementById('loginForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const password = document.getElementById('adminPassword').value;
+            const errorEl = document.getElementById('loginError');
+            
+            if (password === ADMIN_PASSWORD) {
+                sessionStorage.setItem('adminAuth', password);
+                checkAuth();
+            } else {
+                errorEl.textContent = 'Неверный пароль!';
+                errorEl.style.display = 'block';
+                setTimeout(() => {
+                    errorEl.style.display = 'none';
+                }, 3000);
+            }
+        });
+        
+        // Проверяем при загрузке
+        if (!checkAuth()) {
+            document.getElementById('loginScreen').style.display = 'flex';
+            document.getElementById('adminPanel').style.display = 'none';
+        }
 
         function showMessage(text, type = 'success') {
             const messageEl = document.getElementById('message');
