@@ -162,9 +162,9 @@
                 const response = await fetch(`/api/tokens/get?accessCode=${code}`);
                 if (response.ok) {
                     const data = await response.json();
-                    // Сохранение в sessionStorage
-                    sessionStorage.setItem('accessCode', code);
-                    sessionStorage.setItem('authenticated', 'true');
+                    // Сохранение в localStorage (сохраняется после обновления)
+                    localStorage.setItem('accessCode', code);
+                    localStorage.setItem('authenticated', 'true');
                     
                     // Перенаправление на консоль
                     window.location.href = '/minedrop/console';
@@ -185,7 +185,7 @@
         }
 
         // Проверка аутентификации при загрузке
-        if (sessionStorage.getItem('authenticated') === 'true') {
+        if (localStorage.getItem('authenticated') === 'true') {
             window.location.href = '/minedrop/console';
         }
     </script>

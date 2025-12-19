@@ -287,7 +287,7 @@
         
         // Проверка пароля
         function checkAuth() {
-            const savedPassword = sessionStorage.getItem('adminAuth');
+            const savedPassword = localStorage.getItem('adminAuth');
             if (savedPassword === ADMIN_PASSWORD) {
                 document.getElementById('loginScreen').style.display = 'none';
                 document.getElementById('adminPanel').style.display = 'block';
@@ -303,7 +303,7 @@
             const errorEl = document.getElementById('loginError');
             
             if (password === ADMIN_PASSWORD) {
-                sessionStorage.setItem('adminAuth', password);
+                localStorage.setItem('adminAuth', password);
                 checkAuth();
             } else {
                 errorEl.textContent = 'Неверный пароль!';
