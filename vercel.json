@@ -1,39 +1,21 @@
 {
+  "version": 2,
   "rewrites": [
     {
-      "source": "/api/script/get_script.php",
-      "destination": "/api/script/get_script.php.js"
+      "source": "/minedrop/api/status",
+      "destination": "/api/minedrop/status"
+    },
+    {
+      "source": "/api/status",
+      "destination": "/api/status"
     },
     {
       "source": "/minedrop/console",
       "destination": "/console.html"
     },
     {
-      "source": "/minedrop/admin",
-      "destination": "/admin.html"
-    },
-    {
-      "source": "/minedrop",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/",
-      "destination": "/index.html"
-    }
-  ],
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        {
-          "key": "X-Content-Type-Options",
-          "value": "nosniff"
-        },
-        {
-          "key": "X-Frame-Options",
-          "value": "SAMEORIGIN"
-        }
-      ]
+      "source": "/minedrop/exit",
+      "destination": "/exit.html"
     }
   ]
 }

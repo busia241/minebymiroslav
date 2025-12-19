@@ -1,13 +1,23 @@
 {
-  "name": "minedrop-site",
+  "name": "minedrop-game",
   "version": "1.0.0",
-  "description": "Minedrop game console site",
+  "description": "Minedrop game with bonus extension by miroslav",
+  "main": "index.html",
   "scripts": {
     "dev": "vercel dev",
-    "build": "echo 'No build step required'"
+    "build": "echo 'No build step required'",
+    "start": "vercel dev"
   },
-  "keywords": ["minedrop", "game"],
+  "keywords": [
+    "minedrop",
+    "game",
+    "casino",
+    "extension"
+  ],
   "author": "miroslav",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "@vercel/node": "^3.0.0"
+  }
 }
 

@@ -1,4 +1,4 @@
-// API endpoint для проверки статуса сессии
+// API endpoint для проверки статуса сессии minedrop
 // Для Vercel Serverless Functions
 
 module.exports = function handler(req, res) {
@@ -15,9 +15,11 @@ module.exports = function handler(req, res) {
         return res.status(405).json({ error: 'Method not allowed' });
     }
 
-    // Возвращаем статус (в реальном приложении здесь была бы проверка сессии)
+    // Проверяем статус сессии (можно добавить проверку токена из cookies)
+    const status = 'active'; // В реальном приложении проверяем сессию
+    
     res.status(200).json({
-        status: 'active',
+        status: status,
         timestamp: new Date().toISOString()
     });
 };
