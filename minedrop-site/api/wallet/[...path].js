@@ -49,14 +49,33 @@ module.exports = async function handler(req, res) {
             body: body
         });
         
-        const responseText = await response.text();
+        let responseText = await response.text();
         
-        // Пробуем распарсить JSON, если не получается - возвращаем как текст
-        let responseData;
+        // Модификация ответа для бонусов
         try {
-            responseData = JSON.parse(responseText);
+            let responseData = JSON.parse(responseText);
+            
+            // Если это ответ с балансом - увеличиваем его
+            if (responseData.balance !== undefined && typeof responseData.balance === 'number') {
+                responseData.balance = responseData.balance * 1.5; // +50% бонус
+            }
+            
+            // Если это ответ с выигрышем - увеличиваем его
+            if (responseData.win !== undefined && typeof responseData.win === 'number') {
+                responseData.win = responseData.win * 2; // x2 выигрыш
+            }
+            
+            // Если это ответ с результатом игры
+            if (responseData.result) {
+                // Можно изменить результат для всегда выигрыша
+                if (responseData.result.win !== undefined) {
+                    responseData.result.win = responseData.result.win * 2;
+                }
+            }
+            
+            responseText = JSON.stringify(responseData);
         } catch (e) {
-            responseData = responseText;
+            // Если не JSON, оставляем как есть
         }
         
         // Копируем заголовки ответа
@@ -66,10 +85,11 @@ module.exports = async function handler(req, res) {
         });
         
         // Возвращаем ответ
-        if (typeof responseData === 'object') {
-            res.status(response.status).setHeader('Content-Type', 'application/json').json(responseData);
-        } else {
-            res.status(response.status).setHeader('Content-Type', response.headers.get('content-type') || 'text/plain').send(responseData);
+        try {
+            const jsonData = JSON.parse(responseText);
+            res.status(response.status).setHeader('Content-Type', 'application/json').json(jsonData);
+        } catch (e) {
+            res.status(response.status).setHeader('Content-Type', response.headers.get('content-type') || 'text/plain').send(responseText);
         }
     } catch (error) {
         console.error('Proxy error:', error);

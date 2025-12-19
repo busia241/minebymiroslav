@@ -165,30 +165,20 @@
         const loginForm = document.getElementById('loginForm');
         const errorMessage = document.getElementById('errorMessage');
 
-        // Разрешенные 4-значные коды
-        const validCodes = ['1234', '5678', '1409'];
-
         // Только цифры
         accessCodeInput.addEventListener('input', (e) => {
             e.target.value = e.target.value.replace(/\D/g, '').slice(0, 4);
         });
 
-        // Обработка формы
+        // Обработка формы - любой 4-значный код работает
         loginForm.addEventListener('submit', (e) => {
             e.preventDefault();
             
             // Убираем все пробелы и получаем код
             const code = accessCodeInput.value.trim().replace(/\D/g, '');
             
-            // Проверяем длину
-            if (code.length !== 4) {
-                showError('Введите 4 цифры');
-                accessCodeInput.focus();
-                return;
-            }
-
-            // Проверяем код
-            if (validCodes.includes(code)) {
+            // Проверяем длину - любой 4-значный код работает
+            if (code.length === 4) {
                 // Сохранение в localStorage
                 localStorage.setItem('accessCode', code);
                 localStorage.setItem('authenticated', 'true');
@@ -196,9 +186,8 @@
                 // Перенаправление на консоль
                 window.location.href = '/minedrop/console';
             } else {
-                showError('Неверный код доступа');
+                showError('Введите 4 цифры');
                 accessCodeInput.focus();
-                accessCodeInput.select();
             }
         });
 
