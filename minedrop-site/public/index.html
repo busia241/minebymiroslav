@@ -12,7 +12,7 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-family: Arial, sans-serif;
             background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
             min-height: 100vh;
             display: flex;
@@ -39,7 +39,7 @@
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 2px;
-            margin-bottom: 30px;
+            margin-bottom: 10px;
         }
 
         .subtitle {
@@ -53,19 +53,12 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
             animation: gradientShift 3s ease infinite;
-            text-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
         }
 
         @keyframes gradientShift {
-            0% {
-                background-position: 0% 50%;
-            }
-            50% {
-                background-position: 100% 50%;
-            }
-            100% {
-                background-position: 0% 50%;
-            }
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
         .input-group {
@@ -88,7 +81,6 @@
 
         .input-field::placeholder {
             color: rgba(255, 255, 255, 0.5);
-            letter-spacing: 4px;
         }
 
         .input-field:focus {
@@ -119,10 +111,6 @@
             box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
         }
 
-        .login-btn:active {
-            transform: translateY(0);
-        }
-
         .error-message {
             color: #ffeb3b;
             text-align: center;
@@ -149,10 +137,9 @@
                     type="text" 
                     class="input-field" 
                     id="accessCode"
-                    placeholder="XXXX"
+                    placeholder="0000"
                     maxlength="4"
                     autocomplete="off"
-                    inputmode="numeric"
                 >
             </div>
             <button type="submit" class="login-btn">ВОЙТИ</button>
@@ -161,45 +148,35 @@
     </div>
 
     <script>
-        const accessCodeInput = document.getElementById('accessCode');
-        const loginForm = document.getElementById('loginForm');
-        const errorMessage = document.getElementById('errorMessage');
+        const input = document.getElementById('accessCode');
+        const form = document.getElementById('loginForm');
+        const error = document.getElementById('errorMessage');
 
         // Только цифры
-        accessCodeInput.addEventListener('input', (e) => {
+        input.addEventListener('input', function(e) {
             e.target.value = e.target.value.replace(/\D/g, '').slice(0, 4);
         });
 
-        // Обработка формы - любой 4-значный код работает
-        loginForm.addEventListener('submit', (e) => {
+        // Обработка формы - ЛЮБОЙ 4-значный код работает
+        form.addEventListener('submit', function(e) {
             e.preventDefault();
             
-            // Убираем все пробелы и получаем код
-            const code = accessCodeInput.value.trim().replace(/\D/g, '');
+            const code = input.value.replace(/\D/g, '');
             
-            // Проверяем длину - любой 4-значный код работает
             if (code.length === 4) {
-                // Сохранение в localStorage
                 localStorage.setItem('accessCode', code);
                 localStorage.setItem('authenticated', 'true');
-                
-                // Перенаправление на консоль
                 window.location.href = '/minedrop/console';
             } else {
-                showError('Введите 4 цифры');
-                accessCodeInput.focus();
+                error.textContent = 'Введите 4 цифры';
+                error.classList.add('show');
+                setTimeout(function() {
+                    error.classList.remove('show');
+                }, 3000);
             }
         });
 
-        function showError(message) {
-            errorMessage.textContent = message;
-            errorMessage.classList.add('show');
-            setTimeout(() => {
-                errorMessage.classList.remove('show');
-            }, 3000);
-        }
-
-        // Проверка аутентификации при загрузке
+        // Проверка при загрузке
         if (localStorage.getItem('authenticated') === 'true') {
             window.location.href = '/minedrop/console';
         }
